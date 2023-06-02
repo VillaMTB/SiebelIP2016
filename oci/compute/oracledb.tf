@@ -6,11 +6,11 @@ data "oci_core_images" "oel8latest" {
 }
 
 resource "oci_core_instance" "ociVillaMTBDevDBVM" {
-  availability_domain                 = var.oci_availability_domain
-  compartment_id                      = var.org_compartment_ocid
-  display_name                        = "devoradb.${lower(var.organization_name)}.com"
+  availability_domain = var.oci_availability_domain
+  compartment_id      = var.org_compartment_ocid
+  display_name        = "devoradb.${lower(var.organization_name)}.com"
   // is_pv_encryption_in_transit_enabled = true
-  shape                               = "VM.Standard.E4.Flex"
+  shape = "VM.Standard.E4.Flex"
   shape_config {
     memory_in_gbs = 8
     ocpus         = 1
