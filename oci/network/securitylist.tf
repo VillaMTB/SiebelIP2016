@@ -18,7 +18,7 @@ resource "oci_core_security_list" "devdb_security_list" {
   ingress_security_rules {
     description = "MSSQL DB Siebel App Subnet"
     protocol    = "6"
-    source      = cidrsubnet(var.org_cidr_block,8,0)
+    source      = cidrsubnet(var.org_cidr_block, 8, 0)
 
     tcp_options {
       min = 1433
@@ -38,7 +38,7 @@ resource "oci_core_security_list" "devdb_security_list" {
   ingress_security_rules {
     description = "Oracle DB Siebel App Subnet"
     protocol    = "6"
-    source      = cidrsubnet(var.org_cidr_block,8,0)
+    source      = cidrsubnet(var.org_cidr_block, 8, 0)
 
     tcp_options {
       min = 1521
