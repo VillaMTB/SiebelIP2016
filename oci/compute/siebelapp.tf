@@ -1,9 +1,12 @@
-/*
+
+#######################################################################################################
 #	SiebAppSQL
+#######################################################################################################
 resource "oci_core_instance" "ociVillaMTBSiebAppSQL" {
   availability_domain = var.oci_availability_domain
   compartment_id      = var.org_compartment_ocid
   display_name        = "siebappsql.${lower(var.organization_name)}.com"
+  hostname_label            = "siebappsql"
   // is_pv_encryption_in_transit_enabled = true
   shape = "VM.Standard.E4.Flex"
   shape_config {
@@ -14,7 +17,6 @@ resource "oci_core_instance" "ociVillaMTBSiebAppSQL" {
     subnet_id                 = var.oci_app_subnet_id
     assign_private_dns_record = true
     assign_public_ip          = false
-    hostname_label            = "siebappsql"
   }
   source_details {
     source_id   = data.oci_core_images.win2016latest.images[0].id
@@ -36,7 +38,7 @@ resource "oci_core_volume_attachment" "siebappsqlapps_volume_attachment" {
   instance_id     = oci_core_instance.ociVillaMTBSiebAppSQL.id
   volume_id       = oci_core_volume.siebappsqlapps_volume.id
 }
-*/
+
 #######################################################################################################
 #	SiebAppORA
 #######################################################################################################
