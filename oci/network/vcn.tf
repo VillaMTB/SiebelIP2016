@@ -10,7 +10,7 @@ data "oci_core_vcns" "corp_vcns" {
 resource "oci_core_subnet" "ociVillaMTBDevSiebelAppSubnet" {
   compartment_id = var.org_compartment_ocid
   vcn_id         = data.oci_core_vcns.corp_vcns.virtual_networks[0].id
-  cidr_block     = cidrsubnet(cidrsubnet(var.org_cidr_block, 8, 0), 8, 2)
+  cidr_block     = cidrsubnet(var.org_cidr_block, 8, 2)
   display_name   = join("-", [var.organization_name, "Dev", "SiebelApp", "Subnet"])
   dns_label      = "devsiebelapp"
   route_table_id = data.oci_core_vcns.corp_vcns.virtual_networks[0].default_route_table_id
@@ -23,7 +23,7 @@ resource "oci_core_subnet" "ociVillaMTBDevSiebelAppSubnet" {
 resource "oci_core_subnet" "ociVillaMTBDevDBSubnet" {
   compartment_id = var.org_compartment_ocid
   vcn_id         = data.oci_core_vcns.corp_vcns.virtual_networks[0].id
-  cidr_block     = cidrsubnet(cidrsubnet(var.org_cidr_block, 8, 0), 8, 1)
+  cidr_block     = cidrsubnet(var.org_cidr_block, 8, 1)
   display_name   = join("-", [var.organization_name, "Dev", "DB", "Subnet"])
   dns_label      = "devdb"
   route_table_id = data.oci_core_vcns.corp_vcns.virtual_networks[0].default_route_table_id

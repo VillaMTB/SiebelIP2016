@@ -6,7 +6,6 @@ resource "oci_core_instance" "ociVillaMTBSiebAppSQL" {
   availability_domain = var.oci_availability_domain
   compartment_id      = var.org_compartment_ocid
   display_name        = "siebappsql.${lower(var.organization_name)}.com"
-  hostname_label            = "siebappsql"
   // is_pv_encryption_in_transit_enabled = true
   shape = "VM.Standard.E4.Flex"
   shape_config {
@@ -14,6 +13,7 @@ resource "oci_core_instance" "ociVillaMTBSiebAppSQL" {
     ocpus         = 1
   }
   create_vnic_details {
+    hostname_label            = "siebappsql"
     subnet_id                 = var.oci_app_subnet_id
     assign_private_dns_record = true
     assign_public_ip          = false

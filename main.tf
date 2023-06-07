@@ -15,7 +15,7 @@ module "oci-dev-network" {
   az_cidr_block        = cidrsubnet(cidrsubnet(var.org_cidr_block, 8, 1), 8, 0)
   environment_code     = "Dev"
   onprem_cidr_block    = cidrsubnet(var.org_cidr_block, 8, 5)
-  org_cidr_block       = var.org_cidr_block
+  org_cidr_block       = cidrsubnet(var.org_cidr_block, 8, 0)
   org_compartment_ocid = local.org_compartment_ocid
   organization_name    = var.organization_name
 }
