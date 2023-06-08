@@ -1,0 +1,186 @@
+;	srvrmgr_SiebEntORA.txt
+;
+;	PURPOSE:
+;	To enable, create and change Siebel enterprise configuration for Siebel enterprise SiebEntORA
+;
+backup nameserver siebns_backup.txt
+
+set header true
+set footer true
+refresh enterprise
+shutdown server SiebAppORA
+
+;	----------------------------------------------------------------------------------------------
+;	Enterprise level parameters
+;	----------------------------------------------------------------------------------------------
+change ent param BusinessServiceQueryAccessList = "DY Business Service"
+change ent param CACertFileName = D:\Certs\cachain.pem
+change ent param CFGSharedModeUsersDir = "\\\\corpdata\\siebfiledev\\userpref"
+change ent param NotifyHandler = AdminEmailAlert
+change ent param PreLoadSRF = "TRUE"
+
+;	----------------------------------------------------------------------------------------------
+;	Delete custom components
+;	----------------------------------------------------------------------------------------------
+
+;	----------------------------------------------------------------------------------------------
+;	Delete custom component groups
+;	----------------------------------------------------------------------------------------------
+
+;	----------------------------------------------------------------------------------------------
+;	Delete custom named subsystems
+;	----------------------------------------------------------------------------------------------
+delete named subsystem MIS_CRM
+
+;	----------------------------------------------------------------------------------------------
+;	Disable standard component groups not used
+;	----------------------------------------------------------------------------------------------
+disable component group AsgnMgmt
+disable component group CommMgmt
+disable component group EAI
+disable component group eDocuments
+disable component group Fins
+disable component group MktgSrv
+disable component group Remote
+disable component group Workflow
+
+;	----------------------------------------------------------------------------------------------
+;	Enable standard component groups used
+;	----------------------------------------------------------------------------------------------
+enable component group EAI
+assign component group EAI to server SiebAppORA
+enable component group Fins
+assign component group Fins to server SiebAppORA
+enable component group Workflow
+assign component group Workflow to server SiebAppORA
+
+;	----------------------------------------------------------------------------------------------
+;	Deactivate standard components not used in enabled component groups
+;	----------------------------------------------------------------------------------------------
+deactivate component definition BusIntBatchMgr
+deactivate component definition BusIntMgr
+deactivate component definition SiebelRestCompIntMgr
+deactivate component definition FINSeCustomerObjMgr_enu
+deactivate component definition FINSConsoleObjMgr_enu
+deactivate component definition FINSeBankingObjMgr_enu
+deactivate component definition FINSeBrokerageObjMgr_enu
+deactivate component definition FINSeChannelObjMgr_enu
+deactivate component definition FINSeEnrollmentObjMgr_enu
+deactivate component definition FINSeSalesObjMgr_enu
+deactivate component definition InfraEAIOutbound
+deactivate component definition INSeServiceObjMgr_enu
+deactivate component definition JMSReceiver
+deactivate component definition MqSeriesAMIRcvr
+deactivate component definition MqSeriesSrvRcvr
+deactivate component definition MSMQRcvr
+deactivate component definition PageMgr
+deactivate component definition SmartAnswer
+deactivate component definition SMQReceiver
+deactivate component definition CustomAppObjMgr_enu
+deactivate component definition SvrTaskPersist
+
+;	----------------------------------------------------------------------------------------------
+;	Create custom named subsystems
+;	----------------------------------------------------------------------------------------------
+create named subsystem MIS_CRM for subsystem InfraDataSources with DSConnectString=misdevpdb, DSDLLName=sscdo90.dll, DSTableOwner=MIS, DSUsername=LDAPSIEBEL, DSSQLStyle=Oracle
+
+;	----------------------------------------------------------------------------------------------
+;	Change named subsystem parameters
+;	----------------------------------------------------------------------------------------------
+change parameter ApplicationUser="CN=Siebel Application,CN=Users,DC=villamtb,DC=com", BaseDN="DC=villamtb,DC=com", CredentialsAttributeType="msDS-cloudExtensionAttribute15", ServerName=dc1.villamtb.com, SharedCredentialsDN="CN=Siebel DB. Shared,CN=Users,DC=villamtb,DC=com", SingleSignOn=True, UsernameAttributeType=sAMAccountName, HashAlgorithm=RSASHA1, HashDBPwd=True, Port=686, PropagateChange=False, UseSsl=True for named subsystem ADSISecAdpt
+
+
+;	----------------------------------------------------------------------------------------------
+;	Reconfigure component definitions
+;	----------------------------------------------------------------------------------------------
+reconfig compdef DocServer
+change param CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)", HonorMaxTasks=True, MaxTasks=1, MSWordLiveCount=1, MSPPLiveCount=5 for compdef DocServer
+commit reconfig compdef DocServer
+
+reconfig compdef EAIObjMgr_enu
+change param AppletSelectStyle="Applet Select", AutomaticTrailingWildcards=FALSE, BusCompAccessLevel=All, CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)", CFGEnableOLEAutomation=False, CFGRepositoryFile=siebel_sia.srf, CommType=TLS, ConfigFile="eai.cfg", EditProfileAttr=True, EnableVirtualHosts=False, MaxMTServers=1, MaxTasks=100, MinMTServers=1, NamedDataSource="GatewayDataSrc,MIS_CRM,ServerDataSrc", SecureBrowse=True, SecureLogin=True for compdef EAIObjMgr_enu
+delete parameter override for compdef EAIObjMgr_enu param LocaleCode
+commit reconfig compdef EAIObjMgr_enu
+
+reconfig compdef EIM
+change param AutoRestart=False for compdef EIM
+commit reconfig compdef EIM
+
+reconfig compdef FINSObjMgr_enu
+change param AppletSelectStyle="Applet Select", AutomaticTrailingWildcards=FALSE, BusCompAccessLevel=All, CancelQueryTimeout=5, CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)", CFGEnableOLEAutomation=True, CFGRepositoryFile=siebel_sia.srf, CommType=TLS, ConfigFile="fins.cfg", EditProfileAttr=True, EnableVirtualHosts=False, MaxMTServers=1, MaxTasks=100, MinMTServers=1, NamedDataSource="GatewayDataSrc,MIS_CRM,ServerDataSrc", SecureBrowse=True, SecureLogin=True for compdef FINSObjMgr_enu
+delete parameter override for compdef FINSObjMgr_enu param LocaleCode
+commit reconfig compdef FINSObjMgr_enu
+
+reconfig compdef InfraEAIOutbound
+change param CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)" for compdef InfraEAIOutbound
+commit reconfig compdef InfraEAIOutbound
+
+reconfig compdef ListImportSvcMgr
+change param CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)" for compdef ListImportSvcMgr
+commit reconfig compdef ListImportSvcMgr
+
+reconfig compdef MailMgr
+change param CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)" for compdef MailMgr
+commit reconfig compdef MailMgr
+
+reconfig compdef SCBroker
+change param PortNumber=2321 for compdef SCBroker
+commit reconfig compdef SCBroker
+
+reconfig compdef SvrTblCleanup
+change param CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)" for compdef SvrTblCleanup
+commit reconfig compdef SvrTblCleanup
+
+reconfig compdef WfProcBatchMgr
+change param CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)", NamedDataSource="GatewayDataSrc,MIS_CRM,ServerDataSrc", NotifyOnTaskExit=1 for compdef WfProcBatchMgr
+commit reconfig compdef WfProcBatchMgr
+
+reconfig compdef WfProcMgr
+change param CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)", NamedDataSource="GatewayDataSrc,MIS_CRM,ServerDataSrc" for compdef WfProcMgr
+commit reconfig compdef WfProcMgr
+
+reconfig compdef WfRecvMgr
+change param CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)", NamedDataSource="GatewayDataSrc,MIS_CRM,ServerDataSrc" for compdef WfRecvMgr
+commit reconfig compdef WfRecvMgr
+
+;	----------------------------------------------------------------------------------------------
+;	Create custom component groups
+;	----------------------------------------------------------------------------------------------
+
+
+;	----------------------------------------------------------------------------------------------
+;	Create custom component definitions
+;	----------------------------------------------------------------------------------------------
+; reconfig compdef FINSObjMgr_enu_sso
+; change param AppletSelectStyle="Applet Select", AutomaticTrailingWildcards=FALSE, BusCompAccessLevel=All, CancelQueryTimeout=5, CFGApplicationName="Siebel Financial Services", CFGApplicationSplashText="Siebel Financial Services (DEV)", CFGApplicationTitle="Siebel Financial Services (DEV)", CFGEnableOLEAutomation=True, CFGRepositoryFile=siebel_sia.srf, CommType=TLS, ConfigFile="fins.cfg", EditProfileAttr=True, EnableVirtualHosts=False, MaxMTServers=1, MaxTasks=100, MinMTServers=1, NamedDataSource="GatewayDataSrc,MIS_CRM,ServerDataSrc", ProxyEmployee=PROXYE, SecAdptMode=ADSI, SecAdptName=ADSISecAdpt, SecureBrowse=True, SecureLogin=True, UserSWFName=CfgHtmlType.swf for compdef FINSObjMgr_enu_sso
+; delete parameter override for compdef FINSObjMgr_enu_sso param LocaleCode
+; commit reconfig compdef FINSObjMgr_enu_sso
+
+;	----------------------------------------------------------------------------------------------
+;	Reconfigure server parameters
+;	----------------------------------------------------------------------------------------------
+set server SiebAppORA
+change evtloglvl EIMSQL=4 for component EIM
+change evtloglvl EIMTrace=3 for component EIM
+change evtloglvl SQL=4 for component EIM
+change evtloglvl SQLSummary=4 for component EIM
+change evtloglvl TaskConfig=4 for component EIM
+change evtloglvl Trace=3 for component EIM
+
+change evtloglvl %=0 for component WfProcMgr
+
+change param DfltTasks=1, AutoRestart=True, MailProfile="System Alert Email Profile" for comp MailMgr
+unset server
+
+;	----------------------------------------------------------------------------------------------
+;	TLS congiguration (excluding KeyFilePassword)
+;	----------------------------------------------------------------------------------------------
+set server SiebAppORA
+change param CertFileName=D:\certs\siebappora.villamtb.com.pem, KeyFileName=D:\certs\siebappora.villamtb.com.key.pem for server SiebAppORA
+unset server
+;	----------------------------------------------------------------------------------------------
+;	Synchronise batch components
+;	----------------------------------------------------------------------------------------------
+sync components
+
+exit
