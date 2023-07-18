@@ -32,7 +32,7 @@ resource "oci_core_volume" "devmssqldbu01_volume" {
 
   #Optional
   display_name = join("-", [var.organization_name, "Dev", "MSSQLDB", "Apps"])
-  size_in_gbs  = 50
+  size_in_gbs  = 100
 }
 resource "oci_core_volume_attachment" "devmssqldbu01_volume_attachment" {
   #Required

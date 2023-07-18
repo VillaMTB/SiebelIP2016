@@ -8,6 +8,14 @@ resource "oci_core_instance" "ociVillaMTBSiebAppSQL" {
   display_name        = "siebappsql.${lower(var.organization_name)}.com"
   // is_pv_encryption_in_transit_enabled = true
   shape = "VM.Standard.E4.Flex"
+  agent_config {
+    is_management_disabled = false
+    is_monitoring_disabled = false
+    plugins_config {
+      desired_state = "DISABLED"
+      name          = "Custom Logs Monitoring"
+    }
+  }
   shape_config {
     memory_in_gbs = 8
     ocpus         = 1
@@ -22,6 +30,7 @@ resource "oci_core_instance" "ociVillaMTBSiebAppSQL" {
     source_id   = data.oci_core_images.win2016latest.images[0].id
     source_type = "image"
   }
+
 }
 resource "oci_core_volume" "siebappsqlapps_volume" {
   #Required
@@ -30,7 +39,7 @@ resource "oci_core_volume" "siebappsqlapps_volume" {
 
   #Optional
   display_name = join("-", [var.organization_name, "Dev", "SiebAppSQL", "Apps"])
-  size_in_gbs  = 50
+  size_in_gbs  = 100
 }
 resource "oci_core_volume_attachment" "siebappsqlapps_volume_attachment" {
   #Required
@@ -48,6 +57,14 @@ resource "oci_core_instance" "ociVillaMTBSiebAppORA" {
   display_name        = "siebappora.${lower(var.organization_name)}.com"
   // is_pv_encryption_in_transit_enabled = true
   shape = "VM.Standard.E4.Flex"
+  agent_config {
+    is_management_disabled = false
+    is_monitoring_disabled = false
+    plugins_config {
+      desired_state = "DISABLED"
+      name          = "Custom Logs Monitoring"
+    }
+  }
   shape_config {
     memory_in_gbs = 8
     ocpus         = 1
