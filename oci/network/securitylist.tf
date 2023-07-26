@@ -74,6 +74,26 @@ resource "oci_core_security_list" "devsblapp_security_list" {
     }
   }
   ingress_security_rules {
+    description = "Gateway VCN"
+    protocol    = "6"
+    source      = var.org_cidr_block
+
+    tcp_options {
+      min = 2320
+      max = 2320
+    }
+  }
+  ingress_security_rules {
+    description = "SC Broker VCN"
+    protocol    = "6"
+    source      = var.org_cidr_block
+
+    tcp_options {
+      min = 2321
+      max = 2321
+    }
+  }
+  ingress_security_rules {
     description = "Dynamic Port Allocation On Premise"
     protocol    = "6"
     source      = var.onprem_cidr_block
