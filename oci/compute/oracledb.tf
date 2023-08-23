@@ -12,8 +12,8 @@ resource "oci_core_instance" "ociVillaMTBDevDBVM" {
   // is_pv_encryption_in_transit_enabled = true
   shape = "VM.Standard.E4.Flex"
   shape_config {
-    memory_in_gbs = 16
-    ocpus         = 2
+    memory_in_gbs = 12
+    ocpus         = 1
   }
   create_vnic_details {
     subnet_id                 = var.oci_db_subnet_id
